@@ -1,0 +1,4 @@
+venv/*
+player_character/*
+bomb_explosion/*
+__pycache__
