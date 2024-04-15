@@ -23,35 +23,35 @@ class AiPlayer(Entity):
         if self._current_state != self.states['Walking']:
             self._current_state = self.states['Walking']
             self._current_frame = 0
-        self._move_vertical()
+        # self._move_vertical()
         
     def move_right(self) -> None:
         self._direction.x = 1
         if self._current_state != self.states['Walking']:
             self._current_state = self.states['Walking']
             self._current_frame = 0
-        self._move_vertical()
+        # self._move_vertical()
     
     def move_up(self) -> None:
         self._direction.y = -1
         if self._current_state != self.states['Walking']:
             self._current_state = self.states['Walking']
             self._current_frame = 0
-        self._move_horizontal()
+        # self._move_horizontal()
     
     def move_down(self) -> None:
         self._direction.y = 1
         if self._current_state != self.states['Walking']:
             self._current_state = self.states['Walking']
             self._current_frame = 0
-        self._move_horizontal()
+        # self._move_horizontal()
         
     def stop_moving(self) -> None:
-        self._direction = Vector2(0, 0)
         self._current_state = self.states['Idle']
         self._current_frame = 0
         
     def make_move(self, move: str) -> None:
+        self._direction = Vector2(0, 0)
         if self._current_state != self.states['Dying']:
             if move == 'left':
                 self.move_left()

@@ -21,7 +21,7 @@ class Player(Entity):
         self.__bomb_strength = 2
         
     def check_keys(self, pressed_keys) -> None:
-        self._direction = Vector2(0, 0)
+        self._wanted_direction = Vector2(0, 0)
         
         self.handle_keypress(pressed_keys)
         if (pressed_keys[self._controls[0]]):

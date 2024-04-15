@@ -21,7 +21,7 @@ class RL_agent:
         self.__old_state = self.__get_state()
         self.discount = 0.6
         self.learning_rate = 0.1
-        self.actions = ['UP', 'DOWN', 'LEFT', 'RIGHT', 'PLACE_BOMB']
+        self.actions = ['LEFT', 'RIGHT', 'UP', 'DOWN', 'PLACE_BOMB']
         self.observations = ["Player","Wall","Crate","Tile","Bomb"]                             #player, wall, crate, tile, bomb
         self.placed_bomb = False
         self.last_decision_time = time.time()
@@ -81,7 +81,7 @@ class RL_agent:
     def __get_state(self):
         map_copy = self.__get_map_with_players()
         x, y = self.map.calculate_position_on_map(self.player.x, self.player.y)
-        print("X:",x,"Y:",y)
+        # print("X:",x,"Y:",y)
         def is_inside_map(x, y):
             return x >= 0 and x < len(map_copy[0]) and y >= 0 and y < len(map_copy)
         on_right = map_copy[y][x + 1] if is_inside_map(x+1,y) else "Wall"
@@ -118,7 +118,7 @@ class RL_agent:
         if is_inside_map(x,y) and map_copy[y][x] == "Bomb":
             bomb = "InBomb"
 
-        print("STATE:",f"{on_left}_{on_right}_{on_top}_{on_bottom}_{bomb}")
+        # print("STATE:",f"{on_left}_{on_right}_{on_top}_{on_bottom}_{bomb}")
         return f"{on_left}_{on_right}_{on_top}_{on_bottom}_{bomb}"
     
     def __get_informations_from_state(self):
@@ -151,100 +151,102 @@ class RL_agent:
         if bomb != "NoBomb":
             if self.last_action in ['LEFT','RIGHT','DOWN','UP'] and bomb == "InBomb":
                 if state == "Tile":
-                    print ("BONUS IN BOMB")
-                    total_reward += 50
+                    # print ("BONUS IN BOMB")
+                    total_reward += 0
                 else:
-                    print ("PENALTY IN BOMB")
-                    total_reward += -10
+                    # print ("PENALTY IN BOMB")
+                    total_reward += 0
             elif self.last_action == 'PLACE_BOMB' and bomb == "InBomb":
-                total_reward += -100
+                total_reward += 0
             elif self.last_action in ['LEFT','RIGHT','DOWN'] and bomb == "BombUp":
                 if state == "Tile":
-                    print ("BONUS BOMB UP")
-                    total_reward += 50
+                    # print ("BONUS BOMB UP")
+                    total_reward += 0
                 else:
-                    print ("PENALTY BOMB UP")	
-                    total_reward += -10
+                    # print ("PENALTY BOMB UP")	
+                    total_reward += 0
             elif self.last_action in ['UP','RIGHT','LEFT'] and bomb == "BombDown":
                 if state == "Tile":
-                    print ("BONUS BOMB DOWN")
-                    total_reward += 50
+                    # print ("BONUS BOMB DOWN")
+                    total_reward += 0
                 else:
-                    print ("PENALTY BOMB DOWN")
-                    total_reward += -10
+                    # print ("PENALTY BOMB DOWN")
+                    total_reward += 0
             elif self.last_action in ['UP','DOWN','LEFT'] and bomb == "BombRight":
                 if state == "Tile":
-                    print ("BONUS BOMB RIGHT")
-                    total_reward += 50
+                    # print ("BONUS BOMB RIGHT")
+                    total_reward += 0
                 else:
-                    print("PENALTY BOMB RIGHT")
-                    total_reward += -10
+                    # print("PENALTY BOMB RIGHT")
+                    total_reward += 0
             elif self.last_action in ['UP','DOWN','RIGHT'] and bomb == "BombLeft":
                 if state == "Tile":
-                    print ("BONUS BOMB LEFT")
-                    total_reward += 50
+                    # print ("BONUS BOMB LEFT")
+                    total_reward += 0
                 else:
-                    print ("PENALTY BOMB LEFT")
-                    total_reward += -10
+                    # print ("PENALTY BOMB LEFT")
+                    total_reward += 0
             elif self.last_action in ['DOWN','RIGHT'] and bomb == "BombTopLeft":
                 if state == "Tile":
-                    print ("BONUS BOMB TOP LEFT")
-                    total_reward += 50
+                    # print ("BONUS BOMB TOP LEFT")
+                    total_reward += 0
                 else:
-                    print ("PENALTY BOMB TOP LEFT")
-                    total_reward += -10
+                    # print ("PENALTY BOMB TOP LEFT")
+                    total_reward += 0
             elif self.last_action in ['DOWN','LEFT'] and bomb == "BombTopRight":
                 if state == "Tile":
-                    print ("BONUS BOMB TOP RIGHT")
-                    total_reward += 50
+                    # print ("BONUS BOMB TOP RIGHT")
+                    total_reward += 0
                 else:
-                    print ("PENALTY BOMB TOP RIGHT")
-                    total_reward += -10
+                    # print ("PENALTY BOMB TOP RIGHT")
+                    total_reward += 0
             elif self.last_action in ['UP','RIGHT'] and bomb == "BombBottomLeft":
                 if state == "Tile":
-                    print ("BONUS BOMB BOTTOM LEFT")
-                    total_reward += 50
+                    # print ("BONUS BOMB BOTTOM LEFT")
+                    total_reward += 0
                 else:
-                    print ("PENALTY BOMB BOTTOM LEFT")
-                    total_reward += -10
+                    # print ("PENALTY BOMB BOTTOM LEFT")
+                    total_reward += 0
             elif self.last_action in ['UP','LEFT'] and bomb == "BombBottomRight":
                 if state == "Tile":
-                    print ("BONUS BOMB BOTTOM RIGHT")
-                    total_reward += 50
+                    # print ("BONUS BOMB BOTTOM RIGHT")
+                    total_reward += 0
                 else:
-                    print ("PENALTY BOMB BOTTOM RIGHT")
-                    total_reward += -10
+                    # print ("PENALTY BOMB BOTTOM RIGHT")
+                    total_reward += 0
             else:
-                print ("PENALTY BOMB")
-                total_reward += -100
+                # print ("PENALTY BOMB")
+                total_reward += 0
         if bomb == "InBomb" and self.last_action == 'PLACE_BOMB':
-            print("PENALTY PLACE BOMB")
-            total_reward += -40
+            # print("PENALTY PLACE BOMB")
+            total_reward += 0
 
         if self.player._current_state == self.player.states['Dying']:
-            print("PENALTY DYING")
-            total_reward += -10000
+            # print("PENALTY DYING")
+            total_reward += 0
         if state == "Wall" and self.player._current_state == self.player.states['Walking']:
-            print("PENALTY WALL")
-            total_reward += -10
+            # print("PENALTY WALL")
+            total_reward += 0
         if state == "Crate" and self.player._current_state == self.player.states['Walking']:
-            print("PENALTY CRATE")
-            total_reward += -10
+            # print("PENALTY CRATE")
+            total_reward += 0
         if state == "Tile" and self.player._current_state == self.player.states['Walking']:
-            print("BONUS TILE")
-            total_reward += 50
+            # print("BONUS TILE")
+            total_reward += 0
         if state == "Crate" and self.last_action == 'PLACE_BOMB':
-            print("BONUS CRATE PLACE BOMB")
-            total_reward += 100
+            # print("BONUS CRATE PLACE BOMB")
+            total_reward += 0
         if state == "Wall" and self.last_action == 'PLACE_BOMB':
-            print("PENALTY WALL PLACE BOMB")
-            total_reward += -10
+            # print("PENALTY WALL PLACE BOMB")
+            total_reward += 0
         if state == "Player" and self.last_action == 'PLACE_BOMB':
-            print("BONUS PLAYER PLACE BOMB")
-            total_reward += 1000
+            # print("BONUS PLAYER PLACE BOMB")
+            total_reward += 0
         if state == "Player" and self.player._current_state == self.player.states['Walking']:
-            print("BONUS PLAYER")
-            total_reward += 100
+            # print("BONUS PLAYER")
+            total_reward += 0
+        if self.last_action in ['LEFT','RIGHT', 'UP','DOWN'] and state == "Tile":
+            total_reward += 10
         return total_reward
 
     # def __get_surrounding_objects(self):
@@ -314,12 +316,16 @@ class RL_agent:
             self.placed_bomb = False
         match action:
             case 'UP':
+                print("UP")
                 self.player.make_move('up')
             case 'DOWN':
+                print("DOWN")
                 self.player.make_move('down')
             case 'LEFT':
+                print("LEFT")
                 self.player.make_move('left')
             case 'RIGHT':
+                print("RIGHT")
                 self.player.make_move('right')
             case 'PLACE_BOMB':
                 self.player.make_move('place_bomb')
@@ -355,8 +361,12 @@ class RL_agent:
 
             else:
                 max_action_index = np.argmax(Q_table[state])
+                value = Q_table[state][max_action_index]
+                random_actions = list(filter(lambda index: value - 1 <= Q_table[state][index], range(len(Q_table[state]))))
+                max_action_index = random.choice(random_actions)
+                print("ACTION INDEX", max_action_index)
                 selected_action = self.actions[max_action_index]
-                selected_action = max(self.actions, key=lambda action: Q_table[state][self.actions.index(action)])
+                # selected_action = max(self.actions, key=lambda action: Q_table[state][self.actions.index(action)])
                 print("GREEDY CHOICE")
             # index_selected_action = self.actions.index(selected_action)
             # Q_table[self.__old_state][self.actions.index(self.last_action)] = prev_reward[self.actions.index(self.last_action)] + self.learning_rate * (get_reward + self.discount * max(estimated_reward) - prev_reward[self.actions.index(self.last_action)])
@@ -368,7 +378,7 @@ class RL_agent:
             new_value = (1 - self.learning_rate) * old_value + self.learning_rate * (reward + self.discount * next_max)
             Q_table[self.__old_state][self.actions.index(self.last_action)] = new_value
 
-            print("\nState: [", self.__old_state, state, "]\nSelected action: [", self.last_action, selected_action,  "]\nReward:", reward)
+            # print("\nState: [", self.__old_state, state, "]\nSelected action: [", self.last_action, selected_action,  "]\nReward:", reward)
             
             if self.player._current_state == self.player.states['Dying']:
                 self.__died = True

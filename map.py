@@ -23,6 +23,7 @@ class Map(Observer):
         self.current_map = self.origin_map.copy()
         
         self.tile_width = self.origin_map[0][0].rect.width
+        self.tile_height = self.origin_map[0][0].rect.height
         self.__current_w = self.__width
         self.__current_h = self.__height
         
@@ -89,13 +90,13 @@ class Map(Observer):
                     
         n_crates = int(len(self.origin_map[0]) * 1) * self.__rows
         
-        for i in range(n_crates):
-            x = random.randint(0, self.__columns - 1)
-            y = random.randint(0, self.__rows - 1)
-            if (0 <= x <= 1 or self.__columns - 2 <= x <= self.__columns - 1) and (0 <= y <= 1 or self.__rows - 2 <= y <= self.__rows - 1):
-                continue
-            elif not isinstance(self.origin_map[y][x], Wall):
-                self.origin_map[y][x] = Crate(self.origin_map[y][x].x, self.origin_map[y][x].y, tile_width, tile_height)
+        # for i in range(n_crates):
+        #     x = random.randint(0, self.__columns - 1)
+        #     y = random.randint(0, self.__rows - 1)
+        #     if (0 <= x <= 1 or self.__columns - 2 <= x <= self.__columns - 1) and (0 <= y <= 1 or self.__rows - 2 <= y <= self.__rows - 1):
+        #         continue
+        #     elif not isinstance(self.origin_map[y][x], Wall):
+        #         self.origin_map[y][x] = Crate(self.origin_map[y][x].x, self.origin_map[y][x].y, tile_width, tile_height)
         
     def set_starting_postion(self, x: int, y: int) -> tuple:
         return (self.origin_map[x][y].x, self.origin_map[x][y].y)
@@ -168,7 +169,6 @@ class Map(Observer):
                 for tile, x, y in explosion_tiles[key]:
                     if player.check_position(tile):
                         player.set_dead()
-
    
     def update(self, object) -> None:
         if isinstance(object, Bomb):
