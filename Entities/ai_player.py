@@ -18,50 +18,42 @@ class AiPlayer(Entity):
         self.__max_bombs = 1
         self.__bomb_strength = 2
         
-    def move_left(self) -> None:
-        self._direction.x = -1
-        if self._current_state != self.states['Walking']:
-            self._current_state = self.states['Walking']
-            self._current_frame = 0
-        # self._move_vertical()
+    # def move_left(self) -> None:
+    #     self._wanted_direction.x = -1
+    #     if self._current_state != self.states['Walking']:
+    #         self._current_state = self.states['Walking']
+    #         self._current_frame = 0
+    #     # self._move_vertical()
         
-    def move_right(self) -> None:
-        self._direction.x = 1
-        if self._current_state != self.states['Walking']:
-            self._current_state = self.states['Walking']
-            self._current_frame = 0
-        # self._move_vertical()
+    # def move_right(self) -> None:
+    #     self._wanted_direction.x = 1
+    #     if self._current_state != self.states['Walking']:
+    #         self._current_state = self.states['Walking']
+    #         self._current_frame = 0
+    #     # self._move_vertical()
     
-    def move_up(self) -> None:
-        self._direction.y = -1
-        if self._current_state != self.states['Walking']:
-            self._current_state = self.states['Walking']
-            self._current_frame = 0
-        # self._move_horizontal()
+    # def move_up(self) -> None:
+    #     self._wanted_direction.y = -1
+    #     if self._current_state != self.states['Walking']:
+    #         self._current_state = self.states['Walking']
+    #         self._current_frame = 0
+    #     # self._move_horizontal()
     
-    def move_down(self) -> None:
-        self._direction.y = 1
-        if self._current_state != self.states['Walking']:
-            self._current_state = self.states['Walking']
-            self._current_frame = 0
-        # self._move_horizontal()
+    # def move_down(self) -> None:
+    #     self._wanted_direction.y = 1
+    #     if self._current_state != self.states['Walking']:
+    #         self._current_state = self.states['Walking']
+    #         self._current_frame = 0
+    #     # self._move_horizontal()
         
-    def stop_moving(self) -> None:
-        self._current_state = self.states['Idle']
-        self._current_frame = 0
+    # def stop_moving(self) -> None:
+    #     self._current_state = self.states['Idle']
+    #     self._current_frame = 0
         
     def make_move(self, move: str) -> None:
         self._direction = Vector2(0, 0)
         if self._current_state != self.states['Dying']:
-            if move == 'left':
-                self.move_left()
-            elif move == 'right':
-                self.move_right()
-            elif move == 'up':
-                self.move_up()
-            elif move == 'down':
-                self.move_down()
-            elif move == 'place_bomb':
+            if move == 'place_bomb':
                 self.place_bomb()
             
     def __handle_horizontal_collisions(self, collided: bool) -> None:

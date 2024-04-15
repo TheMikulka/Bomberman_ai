@@ -12,8 +12,8 @@ class Map(Observer):
     def __init__(self, width: int, height: int) -> None:
         self.__width = width
         self.__height = height
-        self.__columns = 25
-        self.__rows = 13
+        self._columns = 25
+        self._rows = 13
         self.__origin_background = pygame.transform.scale(pygame.image.load('Assets/Backgrounds/background.png').convert_alpha(), (self.__width, self.__height))
         self.__current_background = self.__origin_background
         self.__players = []
@@ -34,13 +34,13 @@ class Map(Observer):
         x1, y1 = 0.062 * self.__width, 0.11 * self.__height
         x2, y2 = 0.941 * self.__width, 0.11 * self.__height
         width = x2 - x1
-        tile_width = width / self.__columns
+        tile_width = width / self._columns
         x = int(x / tile_width)-1
 
         x3, y3 = 0.941 * self.__width, 0.11 * self.__height
         x4, y4 = 0.941 * self.__width, 0.87 * self.__height
         height = y4 - y3
-        tile_height = height / self.__rows
+        tile_height = height / self._rows
         y = int(y / tile_height) -1
         
         return (x, y)
@@ -68,27 +68,27 @@ class Map(Observer):
         x1, y1 = 0.062 * self.__width, 0.11 * self.__height
         x2, y2 = 0.941 * self.__width, 0.11 * self.__height
         width = x2 - x1
-        tile_width = width / self.__columns
+        tile_width = width / self._columns
         x3, y3 = 0.941 * self.__width, 0.11 * self.__height
         x4, y4 = 0.941 * self.__width, 0.87 * self.__height
         height = y4 - y3
-        tile_height = height / self.__rows
+        tile_height = height / self._rows
         
         current_row = []
-        for i in range(self.__rows):
-            for j in range(self.__columns):
+        for i in range(self._rows):
+            for j in range(self._columns):
                 current_row.append(Tile(x1 + j * tile_width, y1 + i * tile_height, tile_width))
             self.origin_map.append(current_row)
             current_row = []
             
-        for i in range(self.__columns):
-            for j in range(self.__rows):
-                if (i == 0 and j == 0) or (i == self.__columns - 1 and j == 0) or (i == 0 and j == self.__rows - 1) or (i == self.__columns - 1 and j == self.__rows - 1):
+        for i in range(self._columns):
+            for j in range(self._rows):
+                if (i == 0 and j == 0) or (i == self._columns - 1 and j == 0) or (i == 0 and j == self._rows - 1) or (i == self._columns - 1 and j == self._rows - 1):
                     continue
                 if i % 2 == 0 and j % 2 == 0:
                     self.origin_map[j][i] = Wall(self.origin_map[j][i].x, self.origin_map[j][i].y, tile_width, tile_height)
                     
-        n_crates = int(len(self.origin_map[0]) * 1) * self.__rows
+        n_crates = int(len(self.origin_map[0]) * 1) * self._rows
         
         # for i in range(n_crates):
         #     x = random.randint(0, self.__columns - 1)

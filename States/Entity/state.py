@@ -1,4 +1,5 @@
 import pygame
+from pygame.math import Vector2
 
 class State():
     def __init__(self, name) -> None:
@@ -7,5 +8,5 @@ class State():
     def get_name(self) -> str:
         return self._name
     
-    def handle_event(self, keys, controls: list) -> str:
+    def handle_event(self, direction:Vector2) -> str:
         pass

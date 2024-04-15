@@ -15,12 +15,12 @@ class RunningState(GameState):
     
     def initialize(self) -> None:
         self.map = Map(self._game.width, self._game.height)
-        self.player1 = Player(self.map.set_starting_postion(0, 0), 'player_1', PLAYER_1_CONTROLS, (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
-        # self.ai = AiPlayer(self.map.set_starting_postion(6, 12), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
+        # self.player1 = Player(self.map.set_starting_postion(0, 0), 'player_1', PLAYER_1_CONTROLS, (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
+        self.ai = AiPlayer(self.map.set_starting_postion(5, 12), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
         # self.ai2 = AiPlayer(self.map.set_starting_postion(0, 24), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
         # self.ai3 = AiPlayer(self.map.set_starting_postion(12, 0), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
         # self.ai4 = AiPlayer(self.map.set_starting_postion(12, 24), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
-        # self.RL_agent = RL_agent(self.map, self.ai)
+        self.RL_agent = RL_agent(self.map, self.ai)
         # self.RL_agent2 = RL_agent(self.map, self.ai2)
         # self.RL_agent3 = RL_agent(self.map, self.ai3)
         # self.RL_agent4 = RL_agent(self.map, self.ai4)
@@ -49,7 +49,7 @@ class RunningState(GameState):
         
         pressed_keys = pygame.key.get_pressed()
 
-        # self.RL_agent.update()
+        self.RL_agent.update()
         # self.RL_agent2.update()
         # self.RL_agent3.update()
         # self.RL_agent4.update()

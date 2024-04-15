@@ -23,7 +23,6 @@ class Player(Entity):
     def check_keys(self, pressed_keys) -> None:
         self._wanted_direction = Vector2(0, 0)
         
-        self.handle_keypress(pressed_keys)
         if (pressed_keys[self._controls[0]]):
             self._move_up()
         elif (pressed_keys[self._controls[1]]):

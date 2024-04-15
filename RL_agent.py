@@ -21,7 +21,7 @@ class RL_agent:
         self.__old_state = self.__get_state()
         self.discount = 0.6
         self.learning_rate = 0.1
-        self.actions = ['LEFT', 'RIGHT', 'UP', 'DOWN', 'PLACE_BOMB']
+        self.actions = ['LEFT', 'RIGHT', 'UP', 'DOWN', 'IDLE', 'PLACE_BOMB']
         self.observations = ["Player","Wall","Crate","Tile","Bomb"]                             #player, wall, crate, tile, bomb
         self.placed_bomb = False
         self.last_decision_time = time.time()
@@ -80,7 +80,9 @@ class RL_agent:
     
     def __get_state(self):
         map_copy = self.__get_map_with_players()
-        x, y = self.map.calculate_position_on_map(self.player.x, self.player.y)
+        x, y = self.player.last_position 
+        x = x + int(self.player._wanted_direction.x)
+        y = y + int(self.player._wanted_direction.y)
         # print("X:",x,"Y:",y)
         def is_inside_map(x, y):
             return x >= 0 and x < len(map_copy[0]) and y >= 0 and y < len(map_copy)
@@ -123,6 +125,8 @@ class RL_agent:
     
     def __get_informations_from_state(self):
         left,right,top,bottom,bomb = self.__old_state.split("_")
+        print("LEFT:",left,"RIGHT:",right,"TOP:",top,"BOTTOM:",bottom,"BOMB:",bomb)
+        print("LAST ACTION:",self.last_action)
         if self.last_action == 'UP':
             self.last_action_with_movement = 'UP'
             return top, bomb
@@ -134,7 +138,12 @@ class RL_agent:
             return left, bomb
         if self.last_action == 'RIGHT':
             self.last_action_with_movement = 'RIGHT'
-            return right, bomb
+            return right, bomb            
+        if self.last_action == 'IDLE':
+            self.last_action_with_movement = 'IDLE'
+            if bomb == "InBomb":
+                return "Bomb", bomb
+            return "Tile", bomb
         if self.last_action == 'PLACE_BOMB':
             if self.last_action_with_movement == 'UP':
                 return top, bomb
@@ -144,6 +153,10 @@ class RL_agent:
                 return left, bomb
             if self.last_action_with_movement == 'RIGHT':
                 return right, bomb
+            if self.last_action_with_movement == 'IDLE':
+                if bomb == "InBomb":
+                    return "Bomb", bomb
+                return "Tile", bomb
 
     def __get_reward(self):
         state, bomb = self.__get_informations_from_state()
@@ -223,7 +236,7 @@ class RL_agent:
 
         if self.player._current_state == self.player.states['Dying']:
             # print("PENALTY DYING")
-            total_reward += 0
+            total_reward += -10000
         if state == "Wall" and self.player._current_state == self.player.states['Walking']:
             # print("PENALTY WALL")
             total_reward += 0
@@ -249,87 +262,27 @@ class RL_agent:
             total_reward += 10
         return total_reward
 
-    # def __get_surrounding_objects(self):
-    #     # Získání aktuální pozice agenta
-    #     current_position = self.player.position
-    #     # Seznam objektů v okolí
-    #     surrounding_objects = []
-
-    #     # Procházení okolních polí včetně aktuální pozice agenta
-    #     for i in range(current_position[0] - 1, current_position[0] + 2):
-    #         for j in range(current_position[1] - 1, current_position[1] + 2):
-    #             # Zkontrolujeme, zda jsme uvnitř herního pole
-    #             if 0 <= i < self.width and 0 <= j < self.height:
-    #                 # Přidání objektu na dané pozici do seznamu
-    #                 surrounding_objects.append(self.grid[i][j])
-
-    #     return surrounding_objects
-
-    # def __get_reward(self):
-    #     state, bomb = self.__get_informations_from_state()
-    #     total_reward = 0
-
-    #     # Základní odměny a tresty za různé stavy a akce
-    #     if bomb == "InBomb":
-    #         if self.last_action == 'PLACE_BOMB':
-    #         # Získání informací o okolních polích
-    #         surroundings = self.__get_surrounding_objects()
-    #         # Kontrola, zda je vedle bomby crate
-    #         if "Crate" in surroundings:
-    #             total_reward += 100  # Odměna za umístění bomby vedle crate
-    #         elif "Wall" in surroundings:
-    #             total_reward += -10
-    #         elif "Player" in surroundings:
-    #             total_reward += 1000
-    #     elif bomb.startswith("Bomb"):
-    #         if state == "Tile":
-    #             total_reward += 50
-    #         else:
-    #             total_reward += -10
-    #     else:
-    #         if state == "Player":
-    #             total_reward += 100
-    #         elif state == "Wall" or state == "Crate":
-    #             total_reward += -10
-
-    #     # Specifické odměny a tresty za umístění bomby a interakce s objekty
-    #     if self.last_action == 'PLACE_BOMB':
-    #         if state == "Crate":
-    #             total_reward += 100
-    #         elif state == "Wall":
-    #             total_reward += -10
-    #         elif state == "Player":
-    #             total_reward += 1000
-
-    #     # Odměny a tresty za umístění bomby vedle hráče
-    #     if bomb == "InBomb" and self.last_action == 'PLACE_BOMB':
-    #         total_reward += -40
-
-    #     # Trest za umírání
-    #     if self.player._current_state == self.player.states['Dying']:
-    #         total_reward += -10000
-
-    #     return total_reward
-
     def __do_action(self, action):
         if self.placed_bomb:
             self.placed_bomb = False
         match action:
             case 'UP':
                 print("UP")
-                self.player.make_move('up')
+                self.player._move_up()
             case 'DOWN':
                 print("DOWN")
-                self.player.make_move('down')
+                self.player._move_down()
             case 'LEFT':
                 print("LEFT")
-                self.player.make_move('left')
+                self.player._move_left()
             case 'RIGHT':
                 print("RIGHT")
-                self.player.make_move('right')
+                self.player._move_right()
             case 'PLACE_BOMB':
-                self.player.make_move('place_bomb')
+                self.player.place_bomb()
                 self.placed_bomb = True
+            case 'IDLE':
+                self.player._stop_move()
 
     def update(self):
         if self.__died:
@@ -345,18 +298,10 @@ class RL_agent:
         # print("---------------------------------------------------------------------------------------")
 
         state = self.__get_state()
-        estimated_reward = Q_table[state]
-        prev_reward = Q_table[self.__old_state]
         if current_time - self.last_decision_time >= 0.25:
-            # if np.random.uniform(0,1) < epsilon:
-            #     selected_action = np.random.choice(self.actions)
-            #     print("RANDOM CHOICE")
-            # else:
-            #     selected_action = np.argmax(Q_table[state])
-            #     print("GREEDY CHOICE")
             random_n = random.random()
             if random_n < epsilon:
-                selected_action = random.choice(self.actions[:-1])
+                selected_action = random.choice(self.actions)
                 print("RANDOM CHOICE")
 
             else:
@@ -366,10 +311,8 @@ class RL_agent:
                 max_action_index = random.choice(random_actions)
                 print("ACTION INDEX", max_action_index)
                 selected_action = self.actions[max_action_index]
-                # selected_action = max(self.actions, key=lambda action: Q_table[state][self.actions.index(action)])
                 print("GREEDY CHOICE")
-            # index_selected_action = self.actions.index(selected_action)
-            # Q_table[self.__old_state][self.actions.index(self.last_action)] = prev_reward[self.actions.index(self.last_action)] + self.learning_rate * (get_reward + self.discount * max(estimated_reward) - prev_reward[self.actions.index(self.last_action)])
+
             next_state = state
             reward = self.__get_reward()   
             old_value = Q_table[self.__old_state][self.actions.index(self.last_action)]
@@ -377,6 +320,8 @@ class RL_agent:
 
             new_value = (1 - self.learning_rate) * old_value + self.learning_rate * (reward + self.discount * next_max)
             Q_table[self.__old_state][self.actions.index(self.last_action)] = new_value
+
+            print("Current state:", state)
 
             # print("\nState: [", self.__old_state, state, "]\nSelected action: [", self.last_action, selected_action,  "]\nReward:", reward)
             
