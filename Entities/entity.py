@@ -179,17 +179,26 @@ class Entity():
         current_image = self._all_actions[self._current_state.get_name()][self._get_direction()][self._current_frame]
         
         game_display.blit(current_image, (self.x, self.y))
+
+    def _get_accurate_tile_size(self):
+        posLeft,posRight,posTop,posBottom = self._map_size
+        tile_width = (posRight - posLeft) / self._map._columns
+        tile_height = (posBottom - posTop) / self._map._rows
+
+        return tile_width,tile_height,posLeft,posTop,posRight,posBottom
+    
+    def _get_position_in_grid(self, x,y, tile_width,tile_height,posLeft,posTop):
+        r_x = round((x - posLeft) / tile_width)
+        r_y = round((y - posTop) / tile_height)
+        return r_x,r_y
     
     def update(self, game_display: pygame.display, delta_time) -> None:
         position = self.get_position()
         if position is not None:
             x,y = position
-            posLeft,posRight,posTop,posBottom = self._map_size
+            tile_width,tile_height,posLeft,posTop,_,_ = self._get_accurate_tile_size()
 
-            tile_width = (posRight - posLeft) / self._map._columns
-            tile_height = (posBottom - posTop) / self._map._rows
-
-            if abs(x*tile_width - (self.x - posLeft)) < 3 and abs(y*tile_height - self.y + posTop) < 3:
+            if abs(x*tile_width - (self.x - posLeft)) < 3.1 and abs(y*tile_height - self.y + posTop) < 3.1:
                 dirX = x + int(self._wanted_direction.x)
                 dirY = y + int(self._wanted_direction.y)
                 self.last_position = position
@@ -197,6 +206,12 @@ class Entity():
                     tile = type(self._map.current_map[dirY][dirX])
                 else:
                     tile = Wall
+
+                for bomb in self._map.bombs:
+                    b_x,b_y = self._get_position_in_grid(bomb.x,bomb.y,tile_width,tile_height,posLeft,posTop)
+                    if b_x == dirX and b_y == dirY:
+                        tile = Wall
+                        break
 
                 if tile == Wall or tile == Crate:
                     self._wanted_direction = Vector2(0, 0)

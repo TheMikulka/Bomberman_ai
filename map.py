@@ -88,15 +88,16 @@ class Map(Observer):
                 if i % 2 == 0 and j % 2 == 0:
                     self.origin_map[j][i] = Wall(self.origin_map[j][i].x, self.origin_map[j][i].y, tile_width, tile_height)
                     
-        n_crates = int(len(self.origin_map[0]) * 1) * self._rows
+        # n_crates = int(len(self.origin_map[0]) * 1) * self._rows
+        n_crates = 100
         
-        # for i in range(n_crates):
-        #     x = random.randint(0, self.__columns - 1)
-        #     y = random.randint(0, self.__rows - 1)
-        #     if (0 <= x <= 1 or self.__columns - 2 <= x <= self.__columns - 1) and (0 <= y <= 1 or self.__rows - 2 <= y <= self.__rows - 1):
-        #         continue
-        #     elif not isinstance(self.origin_map[y][x], Wall):
-        #         self.origin_map[y][x] = Crate(self.origin_map[y][x].x, self.origin_map[y][x].y, tile_width, tile_height)
+        for i in range(n_crates):
+            x = random.randint(0, self._columns - 1)
+            y = random.randint(0, self._rows - 1)
+            if (0 <= x <= 1 or self._columns - 2 <= x <= self._columns - 1) and (0 <= y <= 1 or self._rows - 2 <= y <= self._rows - 1):
+                continue
+            elif not isinstance(self.origin_map[y][x], Wall):
+                self.origin_map[y][x] = Crate(self.origin_map[y][x].x, self.origin_map[y][x].y, tile_width, tile_height)
         
     def set_starting_postion(self, x: int, y: int) -> tuple:
         return (self.origin_map[x][y].x, self.origin_map[x][y].y)

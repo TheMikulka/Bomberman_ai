@@ -17,7 +17,7 @@ class Player(Entity):
         self.__grid = self.__map.current_map
         self.__game_display = game_display
         self.__bombs = pygame.sprite.Group()
-        self.__max_bombs = 2
+        self.__max_bombs = 1
         self.__bomb_strength = 2
         
     def check_keys(self, pressed_keys) -> None:

@@ -16,7 +16,7 @@ class AiPlayer(Entity):
         self.__game_display = game_display
         self.__bombs = pygame.sprite.Group()
         self.__max_bombs = 1
-        self.__bomb_strength = 2
+        self.__bomb_strength = 1
         
     # def move_left(self) -> None:
     #     self._wanted_direction.x = -1
@@ -72,6 +72,12 @@ class AiPlayer(Entity):
                         self._map.bombs.add(bomb)
                         self.__bombs.add(bomb)
                         self.__grid[self.__grid.index(row)][row.index(tile)] = bomb
+    
+    def _can_place_bomb(self) -> bool:
+        if len(self.__bombs) < self.__max_bombs:
+            return True
+        return False
+        
     
     def update(self, delta_time) -> None:
         collidables = [tile.rect for row in self.__grid for tile in row if isinstance(tile, Wall) or isinstance(tile, Crate)]
