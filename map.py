@@ -88,8 +88,8 @@ class Map(Observer):
                 if i % 2 == 0 and j % 2 == 0:
                     self.origin_map[j][i] = Wall(self.origin_map[j][i].x, self.origin_map[j][i].y, tile_width, tile_height)
                     
-        # n_crates = int(len(self.origin_map[0]) * 1) * self._rows
-        n_crates = 100
+        n_crates = int(len(self.origin_map[0]) * 1) * self._rows
+        # n_crates = 100
         
         for i in range(n_crates):
             x = random.randint(0, self._columns - 1)
