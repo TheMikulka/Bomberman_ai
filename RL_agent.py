@@ -187,8 +187,8 @@ class RL_agent(AiPlayer):
             if close in ["Wall", "Crate"]:
                 total_reward.append(("walk to wall/crate", -5))
 
-            if far in ["Crate", "Player"] and close in ["Tile"] and self.__is_in_radius("Bomb") == 0:
-                total_reward.append(("walk into far crate/player",10))
+            if far in ["Crate", "Player", "Tile"] and close in ["Tile"] and self.__is_in_radius("Bomb") == 0 and center!="Bomb":
+                total_reward.append(("walk into far crate/player/tile",5))
 
             if center == "Bomb" and close == "Tile":
                 if far == "Tile":
@@ -202,13 +202,18 @@ class RL_agent(AiPlayer):
 
             if center == "Tile" and (close == "Bomb" or far == "Bomb"):
                 total_reward.append(("walk into explosion",-15))
+            if "Bomb" in self.__get_direction_corners():
+                total_reward.append(("walk from corner bomb to explosion",-15))
+            if self.__is_in_radius("Bomb") != 0 and close == "Tile":
+                total_reward.append(("walk away from bomb", 10))
+
                    
         #---------------------------------PLACING BOMB---------------------------------
         count_crate = self.__is_in_radius("Crate")
         if self.performed_action == 'PLACE_BOMB' and count_crate > 0:
             total_reward.append(("Reward for placing bomb next to crate",count_crate * 10))
         if self.performed_action != 'PLACE_BOMB' and count_crate > 0 and self.__get_center() != "Bomb" and self.__is_in_radius("Bomb") == 0 and self._can_place_bomb():
-            total_reward.append(("Reward for not placing bomb next to crate",count_crate * -10))
+            total_reward.append(("Reward for not placing bomb next to crate",count_crate * -15))
 
         count_player = self.__is_in_radius("Player")
         if self.performed_action == 'PLACE_BOMB' and count_player > 0:
@@ -238,8 +243,8 @@ class RL_agent(AiPlayer):
             self.__was_idle = True
 
         #---------------------------------DYING---------------------------------
-        if self._current_state == self.states['Dying']:
-            total_reward.append(("Dying",-20))
+        # if self._current_state == self.states['Dying']:
+        #     total_reward.append(("Dying",-20))
 
         print(f"\033[1;35mReward: {total_reward}\033[0m")
         return sum(map(lambda x: x[1], total_reward))
@@ -329,6 +334,6 @@ class RL_agent(AiPlayer):
             if self.table.epsilon > 0.4:
                 self.table.epsilon -= self.table.epsilon * 0.0001
 
-            self.table.save()
+            
             print("---------------------------------------------------------------------------------------")
             
