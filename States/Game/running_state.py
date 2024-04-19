@@ -4,6 +4,7 @@ from .game_state import GameState
 from .pause_state import PauseState
 from Entities.player import Player
 from Entities.ai_player import AiPlayer
+from Q_table import Q_table
 from map import Map
 from RL_agent import RL_agent
 
@@ -15,15 +16,12 @@ class RunningState(GameState):
     
     def initialize(self) -> None:
         self.map = Map(self._game.width, self._game.height)
-        # self.player1 = Player(self.map.set_starting_postion(0, 0), 'player_1', PLAYER_1_CONTROLS, (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
-        self.ai = AiPlayer(self.map.set_starting_postion(0, 24), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
-        self.ai2 = AiPlayer(self.map.set_starting_postion(0, 0), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
-        self.ai3 = AiPlayer(self.map.set_starting_postion(12, 0), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
-        self.ai4 = AiPlayer(self.map.set_starting_postion(12, 24), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
-        self.RL_agent = RL_agent(self.map, self.ai)
-        self.RL_agent2 = RL_agent(self.map, self.ai2)
-        self.RL_agent3 = RL_agent(self.map, self.ai3)
-        self.RL_agent4 = RL_agent(self.map, self.ai4)
+        table = Q_table("Q_table.json", 6)
+        # self.player1 = Player(self.map.set_starting_postion(0, 23), 'player_1', PLAYER_1_CONTROLS, (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
+        self.ai = RL_agent(self.map.set_starting_postion(0, 24), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 1,table)
+        # self.ai2 = RL_agent(self.map.set_starting_postion(0, 0), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 2)
+        # self.ai3 = RL_agent(self.map.set_starting_postion(12, 0), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 3)
+        # self.ai4 = RL_agent(self.map.set_starting_postion(12, 24), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 4)
 
 
         
@@ -48,11 +46,6 @@ class RunningState(GameState):
         self.handle_events()
         
         pressed_keys = pygame.key.get_pressed()
-
-        self.RL_agent.update()
-        self.RL_agent2.update()
-        self.RL_agent3.update()
-        self.RL_agent4.update()
         anybody_alive = False
         for player in self.map.get_players():
             if player._current_state != player.states['Dying']:

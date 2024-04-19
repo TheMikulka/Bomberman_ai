@@ -1,6 +1,7 @@
 import pygame, time
 from Utilities.settings import *
 from States.Game.title_state import TitleState
+from States.Game.running_state import RunningState
 
 class Game():
     def __init__(self, width: int, height: int) -> None:
@@ -35,6 +36,9 @@ class Game():
         
     def create_states(self) -> None:
         self.game_states.append(TitleState(self))
+    
+    def set_to_running_state(self) -> None:
+        RunningState(self).enter_state()
                 
     def run(self) -> None:
         while True:

@@ -8,7 +8,7 @@ from bomb import Bomb
 from Utilities.settings import *
 
 class AiPlayer(Entity):
-    def __init__(self, coords: tuple, entity_name: str, n_frames: tuple, s_width: int, s_height: int, scale, map: Map, game_display: pygame.display) -> None:
+    def __init__(self, coords: tuple, entity_name: str, n_frames: tuple, s_width: int, s_height: int, scale, map: Map, game_display: pygame.display, identifier: int) -> None:
         super().__init__(coords[0], coords[1], entity_name, None, n_frames, s_width, s_height, scale, map)
         self._movement_speed = 5
         self._map.add_player(self)
@@ -17,6 +17,7 @@ class AiPlayer(Entity):
         self.__bombs = pygame.sprite.Group()
         self.__max_bombs = 1
         self.__bomb_strength = 1
+        self._identifier = identifier
         
     # def move_left(self) -> None:
     #     self._wanted_direction.x = -1
