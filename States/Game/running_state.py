@@ -16,12 +16,12 @@ class RunningState(GameState):
     
     def initialize(self) -> None:
         self.map = Map(self._game.width, self._game.height)
-        table = Q_table("Q_table.json", 6)
+        self.table = Q_table("Q_table.json", 6)
         # self.player1 = Player(self.map.set_starting_postion(0, 23), 'player_1', PLAYER_1_CONTROLS, (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
-        self.ai = RL_agent(self.map.set_starting_postion(0, 24), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 1,table)
-        # self.ai2 = RL_agent(self.map.set_starting_postion(0, 0), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 2)
-        # self.ai3 = RL_agent(self.map.set_starting_postion(12, 0), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 3)
-        # self.ai4 = RL_agent(self.map.set_starting_postion(12, 24), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 4)
+        self.ai = RL_agent(self.map.set_starting_postion(0, 24), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 1,self.table)
+        self.ai2 = RL_agent(self.map.set_starting_postion(0, 0), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 2, self.table)
+        self.ai3 = RL_agent(self.map.set_starting_postion(12, 0), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 3, self.table)
+        self.ai4 = RL_agent(self.map.set_starting_postion(12, 24), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 4, self.table)
 
 
         
@@ -46,16 +46,16 @@ class RunningState(GameState):
         self.handle_events()
         
         pressed_keys = pygame.key.get_pressed()
-        anybody_alive = False
+        count_of_alive = 0
         for player in self.map.get_players():
             if player._current_state != player.states['Dying']:
-                anybody_alive = True
-                break
-            # if player._current_state == player.states['Dying'] and player._current_frame == len(player._all_actions[player._current_state.get_name()]['front']) - 1:
-            #     self.initialize()
-        if not anybody_alive:
+                count_of_alive += 1
+
+        if count_of_alive == 1:
             all_players_dead = True
             for player in self.map.get_players():
+                if player._current_state != player.states['Dying']:
+                    continue
                 if player._current_frame != len(player._all_actions[player._current_state.get_name()]['front']) - 1:
                     all_players_dead = False
 
@@ -68,5 +68,6 @@ class RunningState(GameState):
                 player.update(pressed_keys, delta_time)
             else:
                 player.update(delta_time)
+        self.table.save()
         
         
