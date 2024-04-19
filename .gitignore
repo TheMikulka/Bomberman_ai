@@ -1,4 +1,2 @@
-venv/*
-player_character/*
-bomb_explosion/*
 __pycache__
+Q_table.json
