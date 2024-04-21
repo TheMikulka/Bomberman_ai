@@ -19,38 +19,6 @@ class AiPlayer(Entity):
         self.__bomb_strength = 1
         self._identifier = identifier
         
-    # def move_left(self) -> None:
-    #     self._wanted_direction.x = -1
-    #     if self._current_state != self.states['Walking']:
-    #         self._current_state = self.states['Walking']
-    #         self._current_frame = 0
-    #     # self._move_vertical()
-        
-    # def move_right(self) -> None:
-    #     self._wanted_direction.x = 1
-    #     if self._current_state != self.states['Walking']:
-    #         self._current_state = self.states['Walking']
-    #         self._current_frame = 0
-    #     # self._move_vertical()
-    
-    # def move_up(self) -> None:
-    #     self._wanted_direction.y = -1
-    #     if self._current_state != self.states['Walking']:
-    #         self._current_state = self.states['Walking']
-    #         self._current_frame = 0
-    #     # self._move_horizontal()
-    
-    # def move_down(self) -> None:
-    #     self._wanted_direction.y = 1
-    #     if self._current_state != self.states['Walking']:
-    #         self._current_state = self.states['Walking']
-    #         self._current_frame = 0
-    #     # self._move_horizontal()
-        
-    # def stop_moving(self) -> None:
-    #     self._current_state = self.states['Idle']
-    #     self._current_frame = 0
-        
     def make_move(self, move: str) -> None:
         self._direction = Vector2(0, 0)
         if self._current_state != self.states['Dying']:
@@ -65,14 +33,16 @@ class AiPlayer(Entity):
     
     def place_bomb(self) -> None:
         if len(self.__bombs) < self.__max_bombs:
-            for row in self.__grid:
-                for tile in row:
-                    if self.check_position(tile) and not isinstance(tile, Bomb):
-                        bomb = Bomb(tile.rect.x, tile.rect.y, self.__bomb_strength, self.__game_display)
-                        bomb.add_observer(self._map)
-                        self._map.bombs.add(bomb)
-                        self.__bombs.add(bomb)
-                        self.__grid[self.__grid.index(row)][row.index(tile)] = bomb
+            position = self.get_position()
+            if position is not None:
+                x, y = position
+                tile = self.__grid[y][x]
+                if not isinstance(tile, Bomb):
+                    bomb = Bomb(tile.rect.x, tile.rect.y, self.__bomb_strength, self.__game_display)
+                    bomb.add_observer(self._map)
+                    self._map.bombs.add(bomb)
+                    self.__bombs.add(bomb)
+                    self.__grid[y][x] = bomb
     
     def _can_place_bomb(self) -> bool:
         if len(self.__bombs) < self.__max_bombs:
