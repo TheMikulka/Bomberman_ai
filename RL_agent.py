@@ -28,7 +28,7 @@ class RL_agent(AiPlayer):
         self.last_decision_time = time.time()
         self.performed_action = None
         self.__died = False
-        self.__was_idle = False
+        self.__waiting_for_died_calculation = False
         self.table = table
         self.__last_choice_method = ""
 
@@ -255,7 +255,7 @@ class RL_agent(AiPlayer):
                 total_reward.append(("walk in to the wall/crate when in bomb",-10))
 
             if center == "Tile" and (close == "Bomb" or far == "Bomb"):
-                total_reward.append(("walk into explosion",-15))
+                total_reward.append(("walk into explosion",-25))
             if "Bomb" in self.__get_direction_corners():
                 total_reward.append(("walk from corner bomb to explosion",-20))
             if self.__is_in_radius("Bomb") != 0 and close == "Tile":
@@ -270,7 +270,7 @@ class RL_agent(AiPlayer):
         count_crate = self.__is_in_radius("Crate")
         if self.performed_action == 'PLACE_BOMB' and count_crate > 0:
             total_reward.append(("Reward for placing bomb next to crate",count_crate * 10))
-        if self.performed_action != 'PLACE_BOMB' and count_crate > 0 and self.__get_center() != "Bomb" and self.__is_in_radius("Bomb") == 0 and self._can_place_bomb():
+        if self.performed_action != 'PLACE_BOMB' and count_crate > 0 and self.__get_center() != "Bomb" and self.__is_in_radius("Bomb") == 0 and self._can_place_bomb() and self.performed_action != self._where_is_neares_player() :
             total_reward.append(("Reward for not placing bomb next to crate",count_crate * -15))
 
         count_player = self.__is_in_radius("Player")
@@ -293,7 +293,7 @@ class RL_agent(AiPlayer):
             total_reward.append(("Standing in bomb",-10))
         elif self.performed_action == 'IDLE' and count_far_bomb > 0:
             total_reward.append(("Standing in far bomb",10))
-        elif self.performed_action == 'IDLE':
+        elif self.performed_action == 'IDLE' and self._can_place_bomb():
             total_reward.append(("Idling",-5))
 
         #---------------------------------DYING---------------------------------
@@ -304,6 +304,7 @@ class RL_agent(AiPlayer):
         return sum(map(lambda x: x[1], total_reward))
 
     def __do_action(self, action):
+        print(f"\033[1;35mDO ACTION: {action}\033[0m")
         match action:
             case 'UP':
                 self._move_up()
@@ -319,12 +320,18 @@ class RL_agent(AiPlayer):
             case 'IDLE':
                 self._stop_move()
 
-    def update(self, delta_time) -> None:
+    def _update_is_in_center(self):
+        self._stop_move()
         self.calculate_next_action()
+
+    
+    def update(self, delta_time) -> None:
+        if self._current_state == self.states['Dying']:
+            self.calculate_next_action()
         return super().update(delta_time)
     
     def calculate_next_action(self):
-        if self.__died:
+        if self.__died and not self.__waiting_for_died_calculation:
             return
         current_time = time.time()
 
@@ -355,7 +362,7 @@ class RL_agent(AiPlayer):
                     max_action_index = np.argmax(f_state)
                     choosed_method = "\033[94mGREEDY CHOICE WITHOUTH BOMB\033[0m"
                 value = self.table.get(future_state)[max_action_index]
-                random_actions = list(filter(lambda index: value - 1 <=f_state[index], range(len(f_state))))
+                random_actions = list(filter(lambda index: value - 3 <=f_state[index], range(len(f_state))))
                 max_action_index = random.choice(random_actions)
                 selected_action = self.actions[max_action_index]
 
@@ -372,6 +379,8 @@ class RL_agent(AiPlayer):
                 old[self.actions.index(self.performed_action)] = new_value
                 self.table.set(self.performed_state, old)
                 print(f"\033[1;35mFINAL Reward: {reward}\033[0m")
+                if self.__waiting_for_died_calculation:
+                    self.__waiting_for_died_calculation = False
 
             print(f"\033[1m\033[94mPLAYER: {self._identifier}\033[0m")
             print(f"Current state: {self.performed_state}")
@@ -384,8 +393,12 @@ class RL_agent(AiPlayer):
             # self.__print_state(future_state)
             # print(f"\033[92mAction: {selected_action}\033[0m")
 
-            if self._current_state == self.states['Dying']:
+
+            if self._current_state == self.states['Dying'] and not self.__died:
                 self.__died = True
+                self.__waiting_for_died_calculation = True
+            if self.__died and not self.__waiting_for_died_calculation:
+                print(f"\033[1;31mPLAYER: {self._identifier} DIED\033[0m")
                 return
             
             self.__do_action(selected_action)
