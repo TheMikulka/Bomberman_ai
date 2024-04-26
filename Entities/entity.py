@@ -92,10 +92,10 @@ class Entity():
         self._current_delta_time += delta_time
          
         if self._current_delta_time >= self._animation_speed:
-            if self._current_frame < len(self._all_actions[self._current_state.get_name()][self._get_direction()]) - 1:
-                self._current_frame += 1
-            elif self._current_state.get_name() == 'Dying':
+            if self._current_state.get_name() == 'Dying':
                 self._current_frame = len(self._all_actions[self._current_state.get_name()]['front']) - 1
+            elif self._current_frame < len(self._all_actions[self._current_state.get_name()][self._get_direction()]) - 1:
+                self._current_frame += 1
             else:
                 self._current_frame = 0
                 
@@ -192,6 +192,9 @@ class Entity():
         r_y = round((y - posTop) / tile_height)
         return r_x,r_y
     
+    def _update_is_in_center(self):
+        pass
+    
     def update(self, game_display: pygame.display, delta_time) -> None:
         position = self.get_position()
         if position is not None:
@@ -199,6 +202,7 @@ class Entity():
             tile_width,tile_height,posLeft,posTop,_,_ = self._get_accurate_tile_size()
 
             if abs(x*tile_width - (self.x - posLeft)) < 3.1 and abs(y*tile_height - self.y + posTop) < 3.1:
+                self._update_is_in_center()
                 dirX = x + int(self._wanted_direction.x)
                 dirY = y + int(self._wanted_direction.y)
                 self.last_position = position
