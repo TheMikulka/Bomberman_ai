@@ -18,7 +18,7 @@ class Player(Entity):
         self.__game_display = game_display
         self.__bombs = pygame.sprite.Group()
         self.__max_bombs = 1
-        self.__bomb_strength = 2
+        self.__bomb_strength = 1
         
     def check_keys(self, pressed_keys) -> None:
         self._wanted_direction = Vector2(0, 0)
