@@ -12,3 +12,4 @@ class AssetLoader():
         if isinstance(self.__instance, AssetLoader):
             self.wall_img = pygame.image.load('Assets/Wall/wall.png').convert_alpha()
             self.crate_img = pygame.image.load('Assets/Crate/crate.png').convert_alpha()
+            self.button_img = pygame.image.load('Assets/Buttons/button.png').convert_alpha()

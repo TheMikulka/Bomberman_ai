@@ -1,15 +1,16 @@
 import pygame
 from .game_state import GameState
+from Utilities.asset_loader import AssetLoader
 from Utilities.button import Button
 
 class PauseState(GameState):
     def __init__(self, game) -> None:
         GameState.__init__(self, game)
-        self.resume_image = pygame.image.load('Assets/Buttons/button_resume.png').convert_alpha()
-        self.quit_image = pygame.image.load('Assets/Buttons/button_quit.png').convert_alpha()
+        self.resume_image = pygame.image.load('Assets/Buttons/button.png').convert_alpha()
+        self.quit_image = pygame.image.load('Assets/Buttons/button.png').convert_alpha()
         
-        self.resume_button = Button(self._game.width // 2, self._game.height // 2, self.resume_image, 1)
-        self.quit_button = Button(self._game.width // 2, self._game.height // 2 + 100, self.quit_image, 1)
+        self.resume_button = Button(self._game.width // 2, self._game.height // 2.2, AssetLoader().button_img, 'RESUME', 2)
+        self.quit_button = Button(self._game.width // 2, self._game.height // 2.2 + 100, AssetLoader().button_img, 'MAIN MENU', 2)
         
     def handle_events(self) -> None:
         for event in pygame.event.get():
