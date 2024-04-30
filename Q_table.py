@@ -3,23 +3,23 @@ import json
 class Q_table:
     def __init__(self,filename, defaut_len):
         self.filename = filename
-        self.table, self.epsilon = self.load()
+        self.__table, self.epsilon = self.load()
         self.default_len = defaut_len
 
     def get(self, key:str) -> list:
-        if key in self.table:
-            return self.table[key]
+        if key in self.__table:
+            return self.__table[key]
         else:
             return [0 for i in range(self.default_len)]
         
     def set(self, key:str, data:list):
         if sum(data) == 0:
             return
-        self.table[key] = data
+        self.__table[key] = data
     
     def save(self):
         with open(self.filename, "w") as f:
-            json.dump({"Epsilon":self.epsilon,"Q_table":self.table}, f)
+            json.dump({"Epsilon":self.epsilon,"Q_table":self.__table}, f)
 
     def load(self):
         try:
