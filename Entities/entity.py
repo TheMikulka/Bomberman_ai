@@ -103,7 +103,7 @@ class Entity():
         
         current_image = self._all_actions[self._current_state.get_name()][self._get_direction()][self._current_frame]
         
-        game_display.blit(current_image, (self.x, self.y))
+        game_display.blit(current_image, (self.x, self.y - 10))
             
     def _move_horizontal(self):
         if (self._direction.x == -1 and self.rect.x > self._map_size[0]) or (self._direction.x == 1 and self.rect.x < (self._map_size[1] - self.rect.width)):
@@ -163,20 +163,21 @@ class Entity():
     
     def animate(self, game_display: pygame.display, delta_time):
         self._current_delta_time += delta_time
-         
+        state = self._current_state.get_name()
+        direction = self._get_direction()
+        if state == 'Dying':
+                direction = 'front'
+        
         if self._current_delta_time >= self._animation_speed:
-            if self._current_frame < len(self._all_actions[self._current_state.get_name()][self._get_direction()]) - 1:
+            if self._current_frame < len(self._all_actions[state][direction]) - 1:
                 self._current_frame += 1
-            elif self._current_state.get_name() == 'Dying':
-                self._current_frame = len(self._all_actions[self._current_state.get_name()]['front']) - 1
-            elif self._current_state.get_name() == 'Idle':
-                self._current_frame = len(self._all_actions[self._current_state.get_name()]['front']) - 1
+            elif state == 'Dying':
+                self._current_frame = len(self._all_actions[state][direction]) - 1
             else:
                 self._current_frame = 0
                 
             self._current_delta_time = 0
-
-        current_image = self._all_actions[self._current_state.get_name()][self._get_direction()][self._current_frame]
+        current_image = self._all_actions[state][direction][self._current_frame]
         
         game_display.blit(current_image, (self.x, self.y))
 
