@@ -7,6 +7,7 @@ from Entities.ai_player import AiPlayer
 from Q_table import Q_table
 from map import Map
 from RL_agent import RL_agent
+from monitoring import Monitoring
 
 class RunningState(GameState):
     def __init__(self, game) -> None:
@@ -17,10 +18,10 @@ class RunningState(GameState):
     def initialize(self) -> None:
         self.map = Map(self._game.width, self._game.height)
         self.table = Q_table("Q_table.json", 6)
-        # self.player1 = Player(self.map.set_starting_postion(0, 0), 'player_1', PLAYER_1_CONTROLS, (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
-        self.ai = RL_agent(self.map.set_starting_postion(0, 0), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 1,self.table)
-        self.ai2 = RL_agent(self.map.set_starting_postion(0, 24), 'player_4', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 2, self.table)
-        self.ai3 = RL_agent(self.map.set_starting_postion(12, 0), 'player_2', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 3, self.table)
+        self.player1 = Player(self.map.set_starting_postion(0, 0), 'player_1', PLAYER_1_CONTROLS, (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen)
+        # self.ai = RL_agent(self.map.set_starting_postion(0, 0), 'player_1', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 1,self.table)
+        # self.ai2 = RL_agent(self.map.set_starting_postion(0, 24), 'player_4', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 2, self.table)
+        # self.ai3 = RL_agent(self.map.set_starting_postion(12, 0), 'player_2', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 3, self.table)
         self.ai4 = RL_agent(self.map.set_starting_postion(12, 24), 'player_3', (8, 7, 4), 32, 32, 2.2, self.map, self._game.screen, 4, self.table)
 
 
@@ -51,13 +52,20 @@ class RunningState(GameState):
 
         if count_of_alive <= 1:
             all_players_dead = True
+            victory_player = None
             for player in self.map.get_players():
                 if player._current_state != player.states['Dying']:
+                    victory_player = player
                     continue
                 if player._current_frame != len(player._all_actions[player._current_state.get_name()]['front']) - 1:
                     all_players_dead = False
 
             if all_players_dead:
+                if isinstance(victory_player, RL_agent):
+                    Monitoring().add_win(victory_player._identifier)
+                else:
+                    Monitoring().add_win("HUMAN PLAYER")
+                print(Monitoring().win_counter)
                 self.table.save()
                 self.initialize()
                 return
