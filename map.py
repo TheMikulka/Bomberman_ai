@@ -89,6 +89,7 @@ class Map(Observer):
                     self.origin_map[j][i] = Wall(self.origin_map[j][i].x, self.origin_map[j][i].y, tile_width, tile_height)
                     
         n_crates = int(len(self.origin_map[0]) * 1) * self._rows
+        created_crates = 0
         # n_crates = 100
         
         for i in range(n_crates):
@@ -96,8 +97,11 @@ class Map(Observer):
             y = random.randint(0, self._rows - 1)
             if (0 <= x <= 1 or self._columns - 2 <= x <= self._columns - 1) and (0 <= y <= 1 or self._rows - 2 <= y <= self._rows - 1):
                 continue
-            elif not isinstance(self.origin_map[y][x], Wall):
+            elif not isinstance(self.origin_map[y][x], Wall) and not isinstance(self.origin_map[y][x], Crate):
                 self.origin_map[y][x] = Crate(self.origin_map[y][x].x, self.origin_map[y][x].y, tile_width, tile_height)
+                created_crates += 1
+        
+        print("CRATES: ",created_crates)
         
     def set_starting_postion(self, x: int, y: int) -> tuple:
         return (self.origin_map[x][y].x, self.origin_map[x][y].y)
