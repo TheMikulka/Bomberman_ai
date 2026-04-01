@@ -1,24 +1,79 @@
-Spustitelný skript je main.py, který zajišťuje běh aplikace.
-Skript nepříjmá žádné argumenty.
+# 💣 Blast Buddies – Bomberman AI
 
-Základní setup: 1 skutečný hráč a 3 Q-learning agenti. Možno upravit ve tříde RunningState.
+Moderní Python hra inspirovaná Bombermanem s Q-learning AI agenty.
 
-Ovládání hráče: W - pohyb nahoru
-                S - pohyb dolů
-                A - pohyb doleva
-                D - pohyb doprava
-                SPACE - Položení bomby
+---
 
+## 🚀 Spuštění
+
+### 1. Virtuální prostředí
 ```bash
-    # Vytvoření virtualního prostředí
-    python -m venv venv
+python -m venv venv
 
-    # Aktivace virtualního prostředí
-    # Pro Windows
-    venv\Scripts\activate
-    # Pro Unix nebo MacOS
-    source venv/bin/activate
+# Windows
+venv\Scripts\activate
 
-    # Instalace balíčků z requirements.txt
-    pip install -r requirements.txt
+# Linux / macOS
+source venv/bin/activate
 ```
+
+### 2. Nainstalování závislostí
+```bash
+pip install -r requirements.txt
+```
+
+> Doporučená verze: **Python 3.11**
+
+### 3. Spuštění hry
+```bash
+python main.py
+```
+
+---
+
+## 🎮 Ovládání
+
+| Klávesa | Akce       |
+|---------|------------|
+| W       | Pohyb nahoru |
+| S       | Pohyb dolů  |
+| A       | Pohyb doleva |
+| D       | Pohyb doprava |
+| SPACE   | Pokládání bomby |
+
+---
+
+## 🏗️ Struktura projektu
+```
+blast-buddies/
+├── main.py              # Vstupní bod hry
+├── game.py              # Hlavní herní smyčka
+├── map.py               # Generování mapy
+├── bomb.py              # Logika bomb
+├── RL_agent.py          # Q-learning agent
+├── Q_table.py           # Načítání / ukládání Q-tabulky
+├── Q_table.json         # Persistentní Q-tabulka
+├── Entities/
+│   └── ai_player.py     # AI hráč
+├── Obstacles/           # Pevné a zničitelné bloky
+├── States/
+│   └── Game/            # RunningState, PauseState, TitleState
+└── Assets/              # Grafika a animace
+```
+
+---
+
+## 🤖 AI a Q-learning
+
+- **3 AI agenti** používají Q-learning s rovnováhou průzkumu (exploration) a využití (exploitation)
+- Q-tabulka se načítá ze souboru `Q_table.json` a po každé hře se ukládá
+- Počet CPU agentů lze upravit ve třídě `RunningState`
+
+---
+
+## 🖼️ Ukázka
+
+![Gameplay 1](Screenshots/title_page.png)
+![Gameplay 2](Screenshots/pause_screen.png)
+
+---
